@@ -1,0 +1,111 @@
+======================================================================
+Scenario A: main data
+======================================================================
+Starting facts: 60 class memberships, 55 relations, 12 metric values
+Subproperty axiom: 12 directlyDependsOn links also count as dependsOn
+
+Round 1
+  Rule 1 fired: orders_db has critical alert alert_001
+          => FailedComponent(orders_db)
+  Rule 4 fired: inc_001 affects customer-facing service checkout_service
+          => CriticalIncident(inc_001)
+  Rule 4 fired: inc_004 affects customer-facing service search_service
+          => CriticalIncident(inc_004)
+  Rule 5 fired: server_d has CPU usage 95.0, above 90.0
+          => OverloadedServer(server_d)
+  Rule 6 fired: inc_001 affects checkout_service, which is owned by storefront_team
+          => shouldNotify(inc_001, storefront_team)
+  Rule 6 fired: inc_002 affects payment_service, which is owned by payments_team
+          => shouldNotify(inc_002, payments_team)
+  Rule 6 fired: inc_003 affects order_queue, which is owned by platform_team
+          => shouldNotify(inc_003, platform_team)
+  Rule 6 fired: inc_004 affects search_service, which is owned by storefront_team
+          => shouldNotify(inc_004, storefront_team)
+Round 2
+  Rule 2 fired: checkout_service depends on failed component orders_db
+          => AffectedService(checkout_service)
+  Rule 2 fired: inventory_service depends on failed component orders_db
+          => AffectedService(inventory_service)
+  Rule 2 fired: payment_service depends on failed component orders_db
+          => AffectedService(payment_service)
+Round 3
+  Rule 7 fired: web_frontend depends on affected service checkout_service
+          => AffectedService(web_frontend)
+Round 4
+  No new facts. Fixpoint reached after 3 rounds.
+
+Closed-world step (after chaining)
+  inc_002 was not proven critical => MinorIncident(inc_002)
+  inc_003 was not proven critical => MinorIncident(inc_003)
+
+Summary
+  FailedComponent: ['orders_db']
+      expected: ['orders_db']
+  AffectedService: ['checkout_service', 'inventory_service', 'payment_service', 'web_frontend']
+      expected: ['checkout_service', 'inventory_service', 'payment_service', 'web_frontend']
+  CriticalIncident: ['inc_001', 'inc_004']
+      expected: ['inc_001', 'inc_004']
+  MinorIncident: ['inc_002', 'inc_003']
+      expected: ['inc_002', 'inc_003']
+  OverloadedServer: ['server_d']
+      expected: ['server_d']
+
+Notifications (rule 6):
+  inc_001 -> ['storefront_team']
+  inc_002 -> ['payments_team']
+  inc_003 -> ['platform_team']
+  inc_004 -> ['storefront_team']
+
+New data for scenario B: hasAlert(server_a, alert_005), CriticalAlert(alert_005)
+
+======================================================================
+Scenario B: critical alert on server_a (rule 3 demo)
+======================================================================
+Starting facts: 62 class memberships, 56 relations, 12 metric values
+Subproperty axiom: 12 directlyDependsOn links also count as dependsOn
+
+Round 1
+  Rule 1 fired: orders_db has critical alert alert_001
+          => FailedComponent(orders_db)
+  Rule 1 fired: server_a has critical alert alert_005
+          => FailedComponent(server_a)
+  Rule 4 fired: inc_001 affects customer-facing service checkout_service
+          => CriticalIncident(inc_001)
+  Rule 4 fired: inc_004 affects customer-facing service search_service
+          => CriticalIncident(inc_004)
+  Rule 5 fired: server_d has CPU usage 95.0, above 90.0
+          => OverloadedServer(server_d)
+  Rule 6 fired: inc_001 affects checkout_service, which is owned by storefront_team
+          => shouldNotify(inc_001, storefront_team)
+  Rule 6 fired: inc_002 affects payment_service, which is owned by payments_team
+          => shouldNotify(inc_002, payments_team)
+  Rule 6 fired: inc_003 affects order_queue, which is owned by platform_team
+          => shouldNotify(inc_003, platform_team)
+  Rule 6 fired: inc_004 affects search_service, which is owned by storefront_team
+          => shouldNotify(inc_004, storefront_team)
+Round 2
+  Rule 2 fired: checkout_service depends on failed component orders_db
+          => AffectedService(checkout_service)
+  Rule 2 fired: inventory_service depends on failed component orders_db
+          => AffectedService(inventory_service)
+  Rule 2 fired: payment_service depends on failed component orders_db
+          => AffectedService(payment_service)
+  Rule 3 fired: search_service runs on failed server server_a
+          => AffectedService(search_service)
+  Rule 3 fired: web_frontend runs on failed server server_a
+          => AffectedService(web_frontend)
+Round 3
+  No new facts. Fixpoint reached after 2 rounds.
+
+Closed-world step (after chaining)
+  inc_002 was not proven critical => MinorIncident(inc_002)
+  inc_003 was not proven critical => MinorIncident(inc_003)
+
+Summary
+  FailedComponent: ['orders_db', 'server_a']
+      expected: ['orders_db', 'server_a']
+  AffectedService: ['checkout_service', 'inventory_service', 'payment_service', 'search_service', 'web_frontend']
+      expected: ['checkout_service', 'inventory_service', 'payment_service', 'search_service', 'web_frontend']
+
+Newly affected compared with scenario A: ['search_service']
+    expected: ['search_service']
