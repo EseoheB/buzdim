@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://www.example.org/buzdim.owl"
+         xmlns="http://www.example.org/buzdim.owl#">
+
+<owl:Ontology rdf:about="http://www.example.org/buzdim.owl"/>
+
+<owl:ObjectProperty rdf:about="#dependsOn">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#Component"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#directlyDependsOn">
+  <rdfs:subPropertyOf rdf:resource="#dependsOn"/>
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#Component"/>
+  <owl:inverseOf rdf:resource="#isDirectlyDependedOnBy"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#isDirectlyDependedOnBy">
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#Component"/>
+  <owl:inverseOf rdf:resource="#directlyDependsOn"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#runsOn">
+  <rdfs:domain>
+    <owl:Class>
+      <owl:unionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="#Service"/>
+        <rdf:Description rdf:about="#DataStore"/>
+      </owl:unionOf>
+    </owl:Class>
+  </rdfs:domain>
+  <rdfs:range rdf:resource="#Server"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#monitoredBy">
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#MonitoringTool"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#hasAlert">
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#Alert"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#affects">
+  <rdfs:domain rdf:resource="#Incident"/>
+  <rdfs:range rdf:resource="#Component"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#ownedBy">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Component"/>
+  <rdfs:range rdf:resource="#Team"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#shouldNotify">
+  <rdfs:domain rdf:resource="#Incident"/>
+  <rdfs:range rdf:resource="#Team"/>
+</owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="#cpuUsage">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Server"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#memoryUsage">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Server"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#diskUsage">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Server"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:Class rdf:about="#Component">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#ownedBy"/>
+      <owl:onClass rdf:resource="#Team"/>
+      <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Alert">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Incident">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#affects"/>
+      <owl:onClass rdf:resource="#Component"/>
+      <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+</owl:Class>
+
+<owl:Class rdf:about="#Team">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MonitoringTool">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Service">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DataStore">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Infrastructure">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+</owl:Class>
+
+<owl:Class rdf:about="#HealthyComponent">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+  <owl:disjointWith rdf:resource="#FailedComponent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#FailedComponent">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+</owl:Class>
+
+<owl:Class rdf:about="#HighImpactComponent">
+  <rdfs:subClassOf rdf:resource="#Component"/>
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="#Component"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="#isDirectlyDependedOnBy"/>
+          <owl:onClass rdf:resource="#Service"/>
+          <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</owl:minQualifiedCardinality>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="#CustomerFacingService">
+  <rdfs:subClassOf rdf:resource="#Service"/>
+  <owl:disjointWith rdf:resource="#InternalService"/>
+</owl:Class>
+
+<owl:Class rdf:about="#InternalService">
+  <rdfs:subClassOf rdf:resource="#Service"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AffectedService">
+  <rdfs:subClassOf rdf:resource="#Service"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Database">
+  <rdfs:subClassOf rdf:resource="#DataStore"/>
+  <owl:disjointWith rdf:resource="#Cache"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cache">
+  <rdfs:subClassOf rdf:resource="#DataStore"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Server">
+  <rdfs:subClassOf rdf:resource="#Infrastructure"/>
+</owl:Class>
+
+<owl:Class rdf:about="#LoadBalancer">
+  <rdfs:subClassOf rdf:resource="#Infrastructure"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MessageQueue">
+  <rdfs:subClassOf rdf:resource="#Infrastructure"/>
+</owl:Class>
+
+<owl:Class rdf:about="#OverloadedServer">
+  <rdfs:subClassOf rdf:resource="#Server"/>
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="#Server"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="#cpuUsage"/>
+          <owl:someValuesFrom>
+            <rdfs:Datatype>
+              <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+              <owl:withRestrictions>
+                <rdf:Description>
+                  <rdf:first>
+                    <rdf:Description>
+                      <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">90.0</xsd:minExclusive>
+                    </rdf:Description>
+                  </rdf:first>
+                  <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+              </owl:withRestrictions>
+            </rdfs:Datatype>
+          </owl:someValuesFrom>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="#CriticalAlert">
+  <rdfs:subClassOf rdf:resource="#Alert"/>
+  <owl:disjointWith rdf:resource="#WarningAlert"/>
+</owl:Class>
+
+<owl:Class rdf:about="#WarningAlert">
+  <rdfs:subClassOf rdf:resource="#Alert"/>
+</owl:Class>
+
+<owl:Class rdf:about="#CriticalIncident">
+  <rdfs:subClassOf rdf:resource="#Incident"/>
+  <owl:disjointWith rdf:resource="#MinorIncident"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MinorIncident">
+  <rdfs:subClassOf rdf:resource="#Incident"/>
+</owl:Class>
+
+<owl:AllDisjointClasses>
+  <owl:members rdf:parseType="Collection">
+    <rdf:Description rdf:about="#Server"/>
+    <rdf:Description rdf:about="#LoadBalancer"/>
+    <rdf:Description rdf:about="#MessageQueue"/>
+  </owl:members>
+</owl:AllDisjointClasses>
+
+<owl:AllDisjointClasses>
+  <owl:members rdf:parseType="Collection">
+    <rdf:Description rdf:about="#Service"/>
+    <rdf:Description rdf:about="#DataStore"/>
+    <rdf:Description rdf:about="#Infrastructure"/>
+  </owl:members>
+</owl:AllDisjointClasses>
+
+<owl:AllDisjointClasses>
+  <owl:members rdf:parseType="Collection">
+    <rdf:Description rdf:about="#Component"/>
+    <rdf:Description rdf:about="#Alert"/>
+    <rdf:Description rdf:about="#Incident"/>
+    <rdf:Description rdf:about="#Team"/>
+    <rdf:Description rdf:about="#MonitoringTool"/>
+  </owl:members>
+</owl:AllDisjointClasses>
+
+
+</rdf:RDF>
