@@ -1,0 +1,7 @@
+name: buzdim
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - openjdk=25.0.2
+prefix: C:\Users\Bvenu\miniconda3\envs\buzdim
