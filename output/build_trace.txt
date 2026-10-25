@@ -1,0 +1,6 @@
+Classes: 24 (expected 24)
+Object properties: 9 (expected 9)
+Data properties: 3 (expected 3)
+directlyDependsOn parents: [buzdim.dependsOn] (expected [buzdim.dependsOn])
+directlyDependsOn transitive: False (expected False)
+Saved to output/buzdim.owl

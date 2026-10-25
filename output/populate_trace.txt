@@ -1,0 +1,15 @@
+Individuals: 28 (expected 28)
+Components: 14 (expected 14)
+Direct dependency links: 12 (expected 12)
+Alerts: 4 (expected 4)
+Incidents: 4 (expected 4)
+Saved to output/buzdim_populated.owl
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp5m1dtt1u
+* Owlready2 * HermiT took 1.6543669700622559 seconds
+* Owlready * Reparenting buzdim.orders_db: {buzdim.Database} => {buzdim.HighImpactComponent, buzdim.Database}
+* Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
+Consistency check: consistent
+HighImpactComponent: [buzdim.orders_db] (expected [buzdim.orders_db])
+OverloadedServer: [buzdim.server_d] (expected [buzdim.server_d])

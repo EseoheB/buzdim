@@ -1,8 +1,3 @@
-* Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpmysdo9t_ -Y
-* Owlready2 * HermiT took 2.1421284675598145 seconds
-* Owlready * Reparenting buzdim.directlyDependsOn: {owl.ObjectProperty, buzdim.dependsOn} => {buzdim.dependsOn}
-* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 === SWRL rules added ===
 Rule 1: a component with a critical alert is failed
     Component(?c), hasAlert(?c, ?a), CriticalAlert(?a) -> FailedComponent(?c)
@@ -19,6 +14,11 @@ Rule 7: a service that depends on an affected service is also affected
 
 Saved to output/buzdim_rules.owl
 
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpqsaba_kp -Y
+* Owlready2 * HermiT took 1.3179545402526855 seconds
+* Owlready * Reparenting buzdim.directlyDependsOn: {buzdim.dependsOn, owl.ObjectProperty} => {buzdim.dependsOn}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 
 Consistency check: consistent
 

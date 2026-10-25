@@ -1,16 +1,3 @@
-* Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmphorerc5y -Y
-* Owlready2 * HermiT took 2.393272876739502 seconds
-* Owlready * Reparenting buzdim.directlyDependsOn: {owl.ObjectProperty, buzdim.dependsOn} => {buzdim.dependsOn}
-* Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
-* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
-* Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpjku0tee0
-* Owlready2 * HermiT took 1.421680212020874 seconds
-* Owlready * Reparenting buzdim.server_e: {buzdim.Server} => {buzdim.OverloadedServer}
-* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
-* Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpl72gawoh
 
 ======================================================================
 Q3: Which monitoring tool watches each server? (simple lookup)
@@ -37,6 +24,12 @@ Python cross-check:
     expected: server_a, server_b -> cloudwatch; server_c, server_d -> prometheus
 
 Running HermiT on the main ontology (asserted facts and SWRL rules)...
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpr70x5ao3 -Y
+* Owlready2 * HermiT took 1.7242496013641357 seconds
+* Owlready * Reparenting buzdim.directlyDependsOn: {buzdim.dependsOn, owl.ObjectProperty} => {buzdim.dependsOn}
+* Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 
 ======================================================================
 Q4: Which services are affected if orders_db fails? (complex reasoning)
@@ -92,6 +85,11 @@ Rule: OverloadedServer = Server with cpuUsage > 90.0
 
 Live demo: adding two new servers to a separate copy of the ontology
   Added server_e (cpuUsage 91.5) and server_f (cpuUsage 90.0), asserted only as Server
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpagzic8_8
+* Owlready2 * HermiT took 1.4832446575164795 seconds
+* Owlready * Reparenting buzdim.server_e: {buzdim.Server} => {buzdim.OverloadedServer}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
   server_e: cpuUsage 91.5 -> OverloadedServer
   server_f: cpuUsage 90.0 -> not overloaded
     expected: server_e overloaded; server_f not overloaded (the threshold is strictly greater than 90.0)
@@ -115,6 +113,8 @@ Conflicting facts added to a separate copy:
 Rule 1 will infer FailedComponent(server_a), and HealthyComponent and
 FailedComponent are declared disjoint.
 
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpbyvv45zq
 Result: the reasoner reports the ontology as INCONSISTENT.
 server_a cannot be both healthy and failed, so the conflict is detected
 instead of one fact silently overriding the other.
