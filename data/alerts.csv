@@ -1,0 +1,5 @@
+name,class,on_component
+alert_001,CriticalAlert,orders_db
+alert_002,WarningAlert,server_c
+alert_003,WarningAlert,session_cache
+alert_004,WarningAlert,server_d

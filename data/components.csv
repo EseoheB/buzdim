@@ -1,0 +1,15 @@
+name,class,owned_by,runs_on,monitored_by
+web_frontend,CustomerFacingService,storefront_team,server_a,prometheus
+checkout_service,CustomerFacingService,storefront_team,server_b,prometheus
+search_service,CustomerFacingService,storefront_team,server_a,prometheus
+payment_service,InternalService,payments_team,server_b,prometheus
+inventory_service,InternalService,storefront_team,server_c,prometheus
+orders_db,Database,payments_team,server_c,cloudwatch
+product_db,Database,storefront_team,server_c,cloudwatch
+session_cache,Cache,storefront_team,server_b,cloudwatch
+server_a,Server,platform_team,,cloudwatch
+server_b,Server,platform_team,,cloudwatch
+server_c,Server,platform_team,,prometheus
+server_d,Server,platform_team,,prometheus
+load_balancer,LoadBalancer,platform_team,,splunk
+order_queue,MessageQueue,platform_team,,

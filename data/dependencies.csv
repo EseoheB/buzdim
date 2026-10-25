@@ -1,0 +1,13 @@
+component,directly_depends_on
+web_frontend,checkout_service
+web_frontend,search_service
+web_frontend,load_balancer
+checkout_service,payment_service
+checkout_service,orders_db
+checkout_service,session_cache
+checkout_service,order_queue
+payment_service,orders_db
+inventory_service,orders_db
+inventory_service,product_db
+inventory_service,order_queue
+search_service,product_db

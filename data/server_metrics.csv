@@ -1,0 +1,5 @@
+server,cpu_usage,memory_usage,disk_usage
+server_a,45.0,60.0,55.0
+server_b,72.5,68.0,40.0
+server_c,88.0,81.0,70.0
+server_d,95.0,77.0,35.0

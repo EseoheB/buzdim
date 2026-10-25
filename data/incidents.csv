@@ -1,0 +1,5 @@
+name,affects
+inc_001,checkout_service
+inc_002,payment_service
+inc_003,order_queue
+inc_004,search_service
