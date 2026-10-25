@@ -45,7 +45,7 @@ owl:Thing
 | `OverloadedServer` | Defined | Equivalent to: `Server` and `cpuUsage` some float > 90.0 |
 | `HighImpactComponent` | Defined | Equivalent to: `Component` and `isDirectlyDependedOnBy` min 3 `Service` |
 | `FailedComponent` | Rule-inferred | Rule 1 |
-| `AffectedService` | Rule-inferred | Rules 2 and 3 |
+| `AffectedService` | Rule-inferred | Rules 2, 3, and 7 |
 | `CriticalIncident` | Rule-inferred | Rule 4 |
 | `MinorIncident` | Python step | Assigned after reasoning to incidents not classified as critical (closed-world decision) |
 | `HealthyComponent` | Asserted | Used only in the Q12 conflict test |
@@ -125,8 +125,9 @@ Do not declare `HealthyComponent` or `FailedComponent` disjoint with any type cl
 | 4 | An incident affecting a customer-facing service is critical | ∀i,s (Incident(i) ∧ affects(i,s) ∧ CustomerFacingService(s) → CriticalIncident(i)) |
 | 5 | A server with CPU above 90% is overloaded | ∀s,u (Server(s) ∧ cpuUsage(s,u) ∧ u > 90.0 → OverloadedServer(s)) |
 | 6 | An incident affecting a component notifies the owning team | ∀i,c,t (Incident(i) ∧ affects(i,c) ∧ ownedBy(c,t) → shouldNotify(i,t)) |
+| 7 | A service that depends on an affected service is also affected | ∀s,x (Service(s) ∧ dependsOn(s,x) ∧ AffectedService(x) → AffectedService(s)) |
 
-### SWRL versions (rules 1 to 4 and 6)
+### SWRL versions (rules 1 to 4, 6, and 7)
 
 ```
 Component(?c) ^ hasAlert(?c, ?a) ^ CriticalAlert(?a) -> FailedComponent(?c)
@@ -134,13 +135,15 @@ Service(?s) ^ dependsOn(?s, ?c) ^ FailedComponent(?c) -> AffectedService(?s)
 Service(?s) ^ runsOn(?s, ?v) ^ Server(?v) ^ FailedComponent(?v) -> AffectedService(?s)
 Incident(?i) ^ affects(?i, ?s) ^ CustomerFacingService(?s) -> CriticalIncident(?i)
 Incident(?i) ^ affects(?i, ?c) ^ ownedBy(?c, ?t) -> shouldNotify(?i, ?t)
+Service(?s) ^ dependsOn(?s, ?x) ^ AffectedService(?x) -> AffectedService(?s)
 ```
 
 ### Implementation notes
 
 - Rule 5 is implemented in OWL as the `OverloadedServer` defined class, so it has no SWRL version. HermiT does not support SWRL built-ins such as `swrlb:greaterThan`.
 - Rule 6 creates a relationship, so run the reasoner with `infer_property_values=True` to see its results.
-- The Python forward chainer implements all six rules as production rules with printed traces.
+- Rule 7 was added after testing. HermiT applied rule 2 only to direct dependencies, because it does not pass links derived from the transitive `dependsOn` property into SWRL rules, so web_frontend was missed. Rule 7 spreads impact one step at a time (cascading impact) and reaches web_frontend through checkout_service. This is a limitation worth discussing in the report.
+- The Python forward chainer implements all seven rules as production rules with printed traces.
 - The Python backward chainer handles Q5 (root cause). It finds a failed component with no failed dependencies of its own, which SWRL cannot express because it has no negation. It must also handle cycles and cases where no root cause is found.
 - `MinorIncident` is assigned in Python after reasoning. Under the open world assumption, the reasoner never concludes an incident is minor just because nothing made it critical.
 
@@ -213,7 +216,7 @@ cloudwatch, prometheus, splunk
 | Q | Question | Type | Expected answer |
 |---|---|---|---|
 | 3 | Which monitoring tool watches each server? | Simple lookup | server_a, server_b → cloudwatch. server_c, server_d → prometheus. |
-| 4 | Which services are affected if orders_db fails? | Complex reasoning, forward chaining | Rule 1 makes orders_db failed. checkout_service, payment_service, inventory_service are affected directly. web_frontend is affected indirectly. search_service is not affected. |
+| 4 | Which services are affected if orders_db fails? | Complex reasoning, forward chaining | Rule 1 makes orders_db failed. checkout_service, payment_service, inventory_service are affected directly. web_frontend is affected indirectly through checkout_service (rule 7). search_service is not affected. |
 | 5 | What is the root cause of the checkout_service outage? | Backward chaining | orders_db. It is the only failed dependency, it has no dependencies of its own, and its server (server_c) only has a warning alert, so it is not failed. |
 | 7 | Which components are depended on by 3 or more services? | Complex reasoning, cardinality | orders_db only (checkout_service, payment_service, inventory_service). product_db and order_queue have 2 each. |
 | 8 | Which incidents are critical and which are minor? | Classification | Critical: inc_001, inc_004. Minor: inc_002, inc_003. Notify: inc_001 and inc_004 → storefront_team, inc_002 → payments_team, inc_003 → platform_team. |
@@ -232,7 +235,7 @@ Run scenarios B and C on separate copies of the ontology so the main answers in 
 ## 9. Implementation checklist
 
 - [ ] Q3: `Server`, `MonitoringTool`, `monitoredBy`; direct query
-- [ ] Q4: transitive `dependsOn`, `FailedComponent`, `AffectedService`; SWRL rules 1 and 2 with reasoner
+- [ ] Q4: transitive `dependsOn`, `FailedComponent`, `AffectedService`; SWRL rules 1, 2, and 7 with reasoner
 - [ ] Q5: Python backward chainer with trace, cycle handling, and a "no root cause found" case
 - [ ] Q7: `directlyDependsOn`, `isDirectlyDependedOnBy`, `HighImpactComponent`, `AllDifferent`
 - [ ] Q8: `CriticalIncident` via rule 4, `MinorIncident` via Python step, `shouldNotify` via rule 6

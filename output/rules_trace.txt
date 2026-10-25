@@ -1,0 +1,46 @@
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpmysdo9t_ -Y
+* Owlready2 * HermiT took 2.1421284675598145 seconds
+* Owlready * Reparenting buzdim.directlyDependsOn: {owl.ObjectProperty, buzdim.dependsOn} => {buzdim.dependsOn}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
+=== SWRL rules added ===
+Rule 1: a component with a critical alert is failed
+    Component(?c), hasAlert(?c, ?a), CriticalAlert(?a) -> FailedComponent(?c)
+Rule 2: a service that depends on a failed component is affected
+    Service(?s), dependsOn(?s, ?c), FailedComponent(?c) -> AffectedService(?s)
+Rule 3: a service running on a failed server is affected
+    Service(?s), runsOn(?s, ?v), Server(?v), FailedComponent(?v) -> AffectedService(?s)
+Rule 4: an incident affecting a customer-facing service is critical
+    Incident(?i), affects(?i, ?s), CustomerFacingService(?s) -> CriticalIncident(?i)
+Rule 6: an incident notifies the team that owns the affected component
+    Incident(?i), affects(?i, ?c), ownedBy(?c, ?t) -> shouldNotify(?i, ?t)
+Rule 7: a service that depends on an affected service is also affected
+    Service(?s), dependsOn(?s, ?x), AffectedService(?x) -> AffectedService(?s)
+
+Saved to output/buzdim_rules.owl
+
+
+Consistency check: consistent
+
+=== Results after reasoning ===
+FailedComponent (rule 1): ['orders_db']
+    expected: ['orders_db']
+AffectedService (rules 2, 3, and 7): ['checkout_service', 'inventory_service', 'payment_service', 'web_frontend']
+    expected: ['checkout_service', 'inventory_service', 'payment_service', 'web_frontend']
+    note: rule 3 adds nothing in the main run, since no server has failed
+web_frontend dependsOn (direct and indirect): ['checkout_service', 'load_balancer', 'order_queue', 'orders_db', 'payment_service', 'product_db', 'search_service', 'session_cache']
+    web_frontend is affected by rule 7, because checkout_service is affected
+CriticalIncident (rule 4): ['inc_001', 'inc_004']
+    expected: ['inc_001', 'inc_004']
+MinorIncident (Python step): ['inc_002', 'inc_003']
+    expected: ['inc_002', 'inc_003']
+shouldNotify (rule 6):
+    inc_001 -> ['storefront_team']
+    inc_002 -> ['payments_team']
+    inc_003 -> ['platform_team']
+    inc_004 -> ['storefront_team']
+    expected: inc_001 and inc_004 -> storefront_team, inc_002 -> payments_team, inc_003 -> platform_team
+HighImpactComponent (defined class): ['orders_db']
+    expected: ['orders_db']
+OverloadedServer (defined class, rule 5): ['server_d']
+    expected: ['server_d']
