@@ -215,22 +215,23 @@ cloudwatch, prometheus, splunk
 
 | Q | Question | Type | Expected answer |
 |---|---|---|---|
-| 3 | Which monitoring tool watches each server? | Simple lookup | server_a, server_b → cloudwatch. server_c, server_d → prometheus. |
+| 3 | Which monitoring tool watches each server? | Simple lookup (SPARQL) | server_a, server_b → cloudwatch. server_c, server_d → prometheus. |
 | 4 | Which services are affected if orders_db fails? | Complex reasoning, forward chaining | Rule 1 makes orders_db failed. checkout_service, payment_service, inventory_service are affected directly. web_frontend is affected indirectly through checkout_service (rule 7). search_service is not affected. |
 | 5 | What is the root cause of the checkout_service outage? | Backward chaining | orders_db. It is the only failed dependency, it has no dependencies of its own, and its server (server_c) only has a warning alert, so it is not failed. |
 | 7 | Which components are depended on by 3 or more services? | Complex reasoning, cardinality | orders_db only (checkout_service, payment_service, inventory_service). product_db and order_queue have 2 each. |
 | 8 | Which incidents are critical and which are minor? | Classification | Critical: inc_001, inc_004. Minor: inc_002, inc_003. Notify: inc_001 and inc_004 → storefront_team, inc_002 → payments_team, inc_003 → platform_team. |
-| 10 | How is server_d (95% CPU) classified? | Automatic classification | OverloadedServer. server_c at 88.0 is not. |
+| 10 | How is server_d (95% CPU) classified? | Automatic classification | OverloadedServer. server_c at 88.0 is not. In scenario D, new server_e (91.5) is classified as overloaded and server_f (90.0) is not. |
 | 11 | Which components have no monitoring data? | Edge case: incomplete information | order_queue only. |
 | 12 | What happens with conflicting health data? | Edge case: conflicting data | The reasoner reports an inconsistency (scenario C). |
 
 ## 8. Test scenarios
 
-Run scenarios B and C on separate copies of the ontology so the main answers in section 7 stay unchanged.
+Run scenarios B, C, and D on separate copies of the ontology so the main answers in section 7 stay unchanged.
 
 - **Scenario A, main run:** all facts in section 6. Produces the expected answers in section 7.
 - **Scenario B, rule 3 demo:** add alert_005 (CriticalAlert) on server_a. Rule 1 makes server_a failed, then rule 3 makes web_frontend and search_service affected. search_service is the key result, since it was not affected in the main run. This also serves as a forward chaining demo: new data arrives and new conclusions follow.
 - **Scenario C, Q12 conflict:** add alert_005 (CriticalAlert) on server_a and also assert server_a as a `HealthyComponent`. This models a health check saying healthy while an alert says critical. Rule 1 infers failed, which clashes with the disjointness axiom, so the reasoner reports the ontology as inconsistent. Catch `OwlReadyInconsistentOntologyError` and print a clear explanation.
+- **Scenario D, Q10 live classification:** add two new servers, asserted only as `Server`: server_e with cpuUsage 91.5 and server_f with cpuUsage 90.0. The reasoner classifies server_e as an `OverloadedServer` automatically. server_f is not, because the threshold is strictly greater than 90.0, which makes it a boundary test.
 
 ## 9. Implementation checklist
 

@@ -1,0 +1,122 @@
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmphorerc5y -Y
+* Owlready2 * HermiT took 2.393272876739502 seconds
+* Owlready * Reparenting buzdim.directlyDependsOn: {owl.ObjectProperty, buzdim.dependsOn} => {buzdim.dependsOn}
+* Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpjku0tee0
+* Owlready2 * HermiT took 1.421680212020874 seconds
+* Owlready * Reparenting buzdim.server_e: {buzdim.Server} => {buzdim.OverloadedServer}
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpl72gawoh
+
+======================================================================
+Q3: Which monitoring tool watches each server? (simple lookup)
+======================================================================
+SPARQL query:
+
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX bz: <http://www.example.org/buzdim.owl#>
+        SELECT ?server ?tool WHERE {
+            ?server rdf:type bz:Server .
+            ?server bz:monitoredBy ?tool .
+        }
+
+SPARQL results:
+  server_a -> cloudwatch
+  server_b -> cloudwatch
+  server_c -> prometheus
+  server_d -> prometheus
+Python cross-check:
+  server_a -> ['cloudwatch']
+  server_b -> ['cloudwatch']
+  server_c -> ['prometheus']
+  server_d -> ['prometheus']
+    expected: server_a, server_b -> cloudwatch; server_c, server_d -> prometheus
+
+Running HermiT on the main ontology (asserted facts and SWRL rules)...
+
+======================================================================
+Q4: Which services are affected if orders_db fails? (complex reasoning)
+======================================================================
+FailedComponent: ['orders_db']
+Affected directly (rule 2): ['checkout_service', 'inventory_service', 'payment_service']
+Affected indirectly (rule 7): ['web_frontend']
+Not affected: ['search_service']
+    expected: direct checkout_service, inventory_service, payment_service; indirect web_frontend; not affected search_service
+
+======================================================================
+Q5: Root cause of the checkout_service outage (backward chaining)
+======================================================================
+Answered by backward_chainer.py, which prints the full proof trace.
+    expected: root cause orders_db
+
+======================================================================
+Q7: Which components are depended on by 3 or more services? (cardinality)
+======================================================================
+HighImpactComponent (reasoner): ['orders_db']
+Direct service dependents per component:
+  checkout_service: 1 ['web_frontend']
+  load_balancer: 1 ['web_frontend']
+  order_queue: 2 ['checkout_service', 'inventory_service']
+  orders_db: 3 ['checkout_service', 'inventory_service', 'payment_service']
+  payment_service: 1 ['checkout_service']
+  product_db: 2 ['inventory_service', 'search_service']
+  search_service: 1 ['web_frontend']
+  session_cache: 1 ['checkout_service']
+    expected: orders_db only (3); product_db and order_queue have 2 each
+
+======================================================================
+Q8: Which incidents are critical and which are minor? (classification)
+======================================================================
+CriticalIncident (rule 4): ['inc_001', 'inc_004']
+MinorIncident (Python step): ['inc_002', 'inc_003']
+Teams to notify (rule 6):
+  inc_001 affects ['checkout_service'] -> notify ['storefront_team']
+  inc_002 affects ['payment_service'] -> notify ['payments_team']
+  inc_003 affects ['order_queue'] -> notify ['platform_team']
+  inc_004 affects ['search_service'] -> notify ['storefront_team']
+    expected: critical inc_001, inc_004; minor inc_002, inc_003
+
+======================================================================
+Q10: How are servers classified by CPU usage? (automatic classification)
+======================================================================
+Rule: OverloadedServer = Server with cpuUsage > 90.0
+  server_a: cpuUsage 45.0 -> not overloaded
+  server_b: cpuUsage 72.5 -> not overloaded
+  server_c: cpuUsage 88.0 -> not overloaded
+  server_d: cpuUsage 95.0 -> OverloadedServer
+    expected: server_d overloaded; server_c at 88.0 not overloaded
+
+Live demo: adding two new servers to a separate copy of the ontology
+  Added server_e (cpuUsage 91.5) and server_f (cpuUsage 90.0), asserted only as Server
+  server_e: cpuUsage 91.5 -> OverloadedServer
+  server_f: cpuUsage 90.0 -> not overloaded
+    expected: server_e overloaded; server_f not overloaded (the threshold is strictly greater than 90.0)
+
+======================================================================
+Q11: Which components have no monitoring data? (incomplete information)
+======================================================================
+Components with no monitoredBy link (Python check): ['order_queue']
+    expected: ['order_queue']
+Why Python and not the reasoner: under the open world assumption, a missing
+monitoredBy link means 'unknown', not 'none'. The reasoner cannot conclude
+that order_queue is unmonitored, because a tool might exist that was never
+recorded. Treating missing data as absent is a closed-world application choice.
+
+======================================================================
+Q12: What happens with conflicting health data? (consistency test)
+======================================================================
+Conflicting facts added to a separate copy:
+  hasAlert(server_a, alert_005), CriticalAlert(alert_005)  (an alert says critical)
+  HealthyComponent(server_a)                               (a health check says healthy)
+Rule 1 will infer FailedComponent(server_a), and HealthyComponent and
+FailedComponent are declared disjoint.
+
+Result: the reasoner reports the ontology as INCONSISTENT.
+server_a cannot be both healthy and failed, so the conflict is detected
+instead of one fact silently overriding the other.
+    expected: inconsistent
+The main ontology is unaffected, because this test used a separate World.
