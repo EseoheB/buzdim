@@ -1,0 +1,147 @@
+======================================================================
+Investigation 1 (Q5): why is checkout_service affected? (main data)
+======================================================================
+  Goal: AffectedService(checkout_service)?
+    Try rule 3: checkout_service runs on server server_b
+      Goal: FailedComponent(server_b)?
+        Rule 1: server_b has no critical alert. Not proven
+    Try rule 2: checkout_service depends on order_queue
+      Goal: FailedComponent(order_queue)?
+        Rule 1: order_queue has no critical alert. Not proven
+    Try rule 2: checkout_service depends on orders_db
+      Goal: FailedComponent(orders_db)?
+        Rule 1: orders_db has critical alert alert_001. PROVEN
+    Try rule 2: checkout_service depends on payment_service
+      Goal: FailedComponent(payment_service)?
+        Rule 1: payment_service has no critical alert. Not proven
+    Try rule 2: checkout_service depends on session_cache
+      Goal: FailedComponent(session_cache)?
+        Rule 1: session_cache has no critical alert. Not proven
+    Try rule 7: checkout_service depends on service payment_service
+      Goal: AffectedService(payment_service)?
+        Try rule 3: payment_service runs on server server_b
+          FailedComponent(server_b) already checked: not failed
+        Try rule 2: payment_service depends on orders_db
+          FailedComponent(orders_db) already checked: failed
+        Result: AffectedService(payment_service) PROVEN
+    Result: AffectedService(checkout_service) PROVEN
+
+Failed components reached by the proof: ['orders_db']
+Root cause analysis:
+  orders_db IS a root cause: nothing it relies on has failed (checked: ['server_c'])
+Root cause(s): ['orders_db']
+    expected: root cause ['orders_db']
+
+======================================================================
+Investigation 2: is search_service affected? (main data)
+======================================================================
+  Goal: AffectedService(search_service)?
+    Try rule 3: search_service runs on server server_a
+      Goal: FailedComponent(server_a)?
+        Rule 1: server_a has no critical alert. Not proven
+    Try rule 2: search_service depends on product_db
+      Goal: FailedComponent(product_db)?
+        Rule 1: product_db has no critical alert. Not proven
+    Result: AffectedService(search_service) NOT PROVEN
+
+Conclusion: search_service is not affected, so there is no root cause to find.
+    expected: not affected
+
+======================================================================
+Investigation 3: why is web_frontend affected? (scenario B, critical alert on server_a)
+======================================================================
+  Goal: AffectedService(web_frontend)?
+    Try rule 3: web_frontend runs on server server_a
+      Goal: FailedComponent(server_a)?
+        Rule 1: server_a has critical alert alert_005. PROVEN
+    Try rule 2: web_frontend depends on checkout_service
+      Goal: FailedComponent(checkout_service)?
+        Rule 1: checkout_service has no critical alert. Not proven
+    Try rule 2: web_frontend depends on load_balancer
+      Goal: FailedComponent(load_balancer)?
+        Rule 1: load_balancer has no critical alert. Not proven
+    Try rule 2: web_frontend depends on search_service
+      Goal: FailedComponent(search_service)?
+        Rule 1: search_service has no critical alert. Not proven
+    Try rule 7: web_frontend depends on service checkout_service
+      Goal: AffectedService(checkout_service)?
+        Try rule 3: checkout_service runs on server server_b
+          Goal: FailedComponent(server_b)?
+            Rule 1: server_b has no critical alert. Not proven
+        Try rule 2: checkout_service depends on order_queue
+          Goal: FailedComponent(order_queue)?
+            Rule 1: order_queue has no critical alert. Not proven
+        Try rule 2: checkout_service depends on orders_db
+          Goal: FailedComponent(orders_db)?
+            Rule 1: orders_db has critical alert alert_001. PROVEN
+        Try rule 2: checkout_service depends on payment_service
+          Goal: FailedComponent(payment_service)?
+            Rule 1: payment_service has no critical alert. Not proven
+        Try rule 2: checkout_service depends on session_cache
+          Goal: FailedComponent(session_cache)?
+            Rule 1: session_cache has no critical alert. Not proven
+        Try rule 7: checkout_service depends on service payment_service
+          Goal: AffectedService(payment_service)?
+            Try rule 3: payment_service runs on server server_b
+              FailedComponent(server_b) already checked: not failed
+            Try rule 2: payment_service depends on orders_db
+              FailedComponent(orders_db) already checked: failed
+            Result: AffectedService(payment_service) PROVEN
+        Result: AffectedService(checkout_service) PROVEN
+    Try rule 7: web_frontend depends on service search_service
+      Goal: AffectedService(search_service)?
+        Try rule 3: search_service runs on server server_a
+          FailedComponent(server_a) already checked: failed
+        Try rule 2: search_service depends on product_db
+          Goal: FailedComponent(product_db)?
+            Rule 1: product_db has no critical alert. Not proven
+        Result: AffectedService(search_service) PROVEN
+    Result: AffectedService(web_frontend) PROVEN
+
+Failed components reached by the proof: ['orders_db', 'server_a']
+Root cause analysis:
+  orders_db IS a root cause: nothing it relies on has failed (checked: ['server_c'])
+  server_a IS a root cause: nothing it relies on has failed (checked: nothing)
+Root cause(s): ['orders_db', 'server_a']
+    expected: root causes ['orders_db', 'server_a']
+
+======================================================================
+Investigation 4 (edge case): circular dependency between checkout_service and payment_service
+======================================================================
+  Goal: AffectedService(checkout_service)?
+    Try rule 3: checkout_service runs on server server_b
+      Goal: FailedComponent(server_b)?
+        Rule 1: server_b has no critical alert. Not proven
+    Try rule 2: checkout_service depends on order_queue
+      Goal: FailedComponent(order_queue)?
+        Rule 1: order_queue has no critical alert. Not proven
+    Try rule 2: checkout_service depends on orders_db
+      Goal: FailedComponent(orders_db)?
+        Rule 1: orders_db has critical alert alert_001. PROVEN
+    Try rule 2: checkout_service depends on payment_service
+      Goal: FailedComponent(payment_service)?
+        Rule 1: payment_service has no critical alert. Not proven
+    Try rule 2: checkout_service depends on session_cache
+      Goal: FailedComponent(session_cache)?
+        Rule 1: session_cache has no critical alert. Not proven
+    Try rule 7: checkout_service depends on service payment_service
+      Goal: AffectedService(payment_service)?
+        Try rule 3: payment_service runs on server server_b
+          FailedComponent(server_b) already checked: not failed
+        Try rule 2: payment_service depends on checkout_service
+          Goal: FailedComponent(checkout_service)?
+            Rule 1: checkout_service has no critical alert. Not proven
+        Try rule 2: payment_service depends on orders_db
+          FailedComponent(orders_db) already checked: failed
+        Try rule 7: payment_service depends on service checkout_service
+          Goal: AffectedService(checkout_service)?
+            Cycle detected: checkout_service -> payment_service -> checkout_service. Skipping this branch
+        Result: AffectedService(payment_service) PROVEN
+    Result: AffectedService(checkout_service) PROVEN
+
+Failed components reached by the proof: ['orders_db']
+Root cause analysis:
+  orders_db IS a root cause: nothing it relies on has failed (checked: ['server_c'])
+Root cause(s): ['orders_db']
+    expected: cycle detected and skipped, root cause still ['orders_db']
+
