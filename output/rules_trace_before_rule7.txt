@@ -1,0 +1,32 @@
+Running the SWRL rules WITHOUT rule 7 (the first version of the system)
+
+=== SWRL rules added ===
+Rule 1: a component with a critical alert is failed
+    Component(?c), hasAlert(?c, ?a), CriticalAlert(?a) -> FailedComponent(?c)
+Rule 2: a service that depends on a failed component is affected
+    Service(?s), dependsOn(?s, ?c), FailedComponent(?c) -> AffectedService(?s)
+Rule 3: a service running on a failed server is affected
+    Service(?s), runsOn(?s, ?v), Server(?v), FailedComponent(?v) -> AffectedService(?s)
+Rule 4: an incident affecting a customer-facing service is critical
+    Incident(?i), affects(?i, ?s), CustomerFacingService(?s) -> CriticalIncident(?i)
+Rule 6: an incident notifies the team that owns the affected component
+    Incident(?i), affects(?i, ?c), ownedBy(?c, ?t) -> shouldNotify(?i, ?t)
+
+* Owlready2 * Running HermiT...
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpt9j1a8gc -Y
+* Owlready2 * HermiT took 1.3111107349395752 seconds
+* Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
+
+=== Results without rule 7 ===
+FailedComponent (rule 1): ['orders_db']
+AffectedService (rules 2 and 3 only): ['checkout_service', 'inventory_service', 'payment_service']
+    expected with all rules: ['checkout_service', 'inventory_service', 'payment_service', 'web_frontend']
+Missing from AffectedService: ['web_frontend']
+
+web_frontend dependsOn (direct and indirect, worked out by owlready2): ['checkout_service', 'load_balancer', 'order_queue', 'orders_db', 'payment_service', 'product_db', 'search_service', 'session_cache']
+    orders_db is in this list, through checkout_service, so rule 2 should apply
+    to web_frontend. HermiT applied rule 2 only to direct dependencies and did
+    not pass this transitive link to the SWRL rules.
+
+Rule 7 fixes this by spreading impact one step at a time: run rules.py to see
+web_frontend added once checkout_service is affected.

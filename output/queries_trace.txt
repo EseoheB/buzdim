@@ -25,9 +25,9 @@ Python cross-check:
 
 Running HermiT on the main ontology (asserted facts and SWRL rules)...
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmph2t5rpt6 -Y
-* Owlready2 * HermiT took 1.7160687446594238 seconds
-* Owlready * Reparenting buzdim.directlyDependsOn: {buzdim.dependsOn, owl.ObjectProperty} => {buzdim.dependsOn}
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpgagf_cso -Y
+* Owlready2 * HermiT took 1.2853100299835205 seconds
+* Owlready * Reparenting buzdim.directlyDependsOn: {owl.ObjectProperty, buzdim.dependsOn} => {buzdim.dependsOn}
 * Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 
@@ -86,8 +86,8 @@ Rule: OverloadedServer = Server with cpuUsage > 90.0
 Live demo: adding two new servers to a separate copy of the ontology
   Added server_e (cpuUsage 91.5) and server_f (cpuUsage 90.0), asserted only as Server
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp56qgkjhp
-* Owlready2 * HermiT took 1.2725272178649902 seconds
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpebkbs4sv
+* Owlready2 * HermiT took 1.197007179260254 seconds
 * Owlready * Reparenting buzdim.server_e: {buzdim.Server} => {buzdim.OverloadedServer}
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
   server_e: cpuUsage 91.5 -> OverloadedServer
@@ -114,7 +114,7 @@ Rule 1 will infer FailedComponent(server_a), and HealthyComponent and
 FailedComponent are declared disjoint.
 
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp8b6uez5v
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpy1varskg
 Result: the reasoner reports the ontology as INCONSISTENT.
 server_a cannot be both healthy and failed, so the conflict is detected
 instead of one fact silently overriding the other.

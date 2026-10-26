@@ -58,6 +58,7 @@ buzdim/
         forward_chainer.py     data-driven rule engine with round-by-round traces
         backward_chainer.py    goal-driven root cause analysis with proof traces
         queries.py             answers the competency questions
+        reproduce_before_rule7.py  runs the rules without rule 7 to show the HermiT limitation
     output/                    ontology files and reasoning traces
     screenshots/               Protege views of the ontology
         01_class_hierarchy_asserted.jpg        class tree as designed

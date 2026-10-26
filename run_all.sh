@@ -28,6 +28,7 @@ run_step() {
 run_step build_ontology.py   build_trace.txt
 run_step populate.py         populate_trace.txt
 run_step rules.py            rules_trace.txt
+run_step reproduce_before_rule7.py rules_trace_before_rule7.txt
 run_step forward_chainer.py  forward_chaining_trace.txt
 run_step backward_chainer.py backward_chaining_trace.txt
 run_step queries.py          queries_trace.txt
