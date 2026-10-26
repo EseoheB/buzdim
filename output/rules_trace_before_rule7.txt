@@ -13,8 +13,8 @@ Rule 6: an incident notifies the team that owns the affected component
     Incident(?i), affects(?i, ?c), ownedBy(?c, ?t) -> shouldNotify(?i, ?t)
 
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpt9j1a8gc -Y
-* Owlready2 * HermiT took 1.3111107349395752 seconds
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp34wq_zw1 -Y
+* Owlready2 * HermiT took 1.2514276504516602 seconds
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 
 === Results without rule 7 ===
