@@ -14,6 +14,16 @@ Built for AAI6600 Applied Artificial Intelligence, Northeastern University. Impl
 - **Reasoning:** consistency checking and classification with the HermiT reasoner, plus Python forward and backward chaining engines with step-by-step traces
 - **Queries:** 8 competency questions, including a SPARQL lookup, a live classification demo, and tests for incomplete and conflicting data
 
+## System at a glance
+
+The conceptual model shows the main classes, their subclasses, and the properties that connect them. Hollow arrowheads are subclass links, blue arrows are object properties, and the dashed box lists the state classes that the rules fill in.
+
+![Conceptual model of the BuzDim ontology](docs/figures/conceptual_model.png)
+
+The architecture diagram shows how the scripts run in order, which files they pass along, and which ones call the HermiT reasoner.
+
+![System architecture and data flow](docs/figures/system_architecture.png)
+
 ## Project structure
 
 ```
@@ -24,6 +34,11 @@ buzdim/
     run_all.sh                 runs every script in order and saves all traces
     docs/
         buzdim_model.md        full design: classes, axioms, rules, data, expected answers
+        figures/
+            conceptual_model.dot       Graphviz source for the conceptual model
+            conceptual_model.png       conceptual model diagram (report Figure 1)
+            system_architecture.dot    Graphviz source for the architecture diagram
+            system_architecture.png    architecture diagram (report Figure 4)
     data/                      sample data files (the ShopLite individuals)
         components.csv
         server_metrics.csv
@@ -42,6 +57,12 @@ buzdim/
         queries.py             answers the competency questions
     output/                    ontology files and reasoning traces
     screenshots/               Protege views of the ontology
+        01_class_hierarchy_asserted.jpg        class tree as designed
+        02_class_hierarchy_inferred.jpg        class tree after reasoning (no unsatisfiable classes)
+        03_dl_query_high_impact_component.jpg  DL query returning orders_db
+        04_dl_query_overloaded_server.jpg      DL query returning server_d
+        05_object_properties.jpg               directlyDependsOn: subproperty, inverse, not transitive
+        06_individuals.jpg                     orders_db with its asserted and inferred facts
 ```
 
 ## Requirements
@@ -50,6 +71,7 @@ buzdim/
 - **owlready2 0.51**
 - **Java 25.** owlready2 runs its reasoners in Java. HermiT works on Java 17 or newer, but the Pellet reasoner bundled with owlready2 0.51 requires Java 25. With an older Java, Pellet fails with an `UnsupportedClassVersionError`.
 - **Protege 5.x** (optional) to view the `.owl` files
+- **Graphviz** (optional) only to redraw the diagrams in `docs/figures/`. It is not needed to run the project.
 
 ## Setup
 
@@ -173,6 +195,7 @@ To try a new scenario, add a row to `data/alerts.csv` (for example, a `CriticalA
 | File | Contents |
 |---|---|
 | `output/buzdim.owl` | Ontology structure only |
+| `output/build_trace.txt` | Class and property counts from building the structure |
 | `output/buzdim_populated.owl` | Structure plus the 28 individuals |
 | `output/buzdim_rules.owl` | Populated ontology plus the SWRL rules (open in Protege to rerun the rules) |
 | `output/populate_trace.txt` | Counts and the first consistency check |
@@ -185,6 +208,17 @@ To try a new scenario, add a row to `data/alerts.csv` (for example, a `CriticalA
 ## Notable finding: transitive properties and SWRL rules
 
 Rule 2 originally relied on the transitive `dependsOn` property to reach services that depend on a failed component indirectly. In testing, HermiT applied the rule only to direct dependencies: it does not pass links derived from transitivity into SWRL rules, so web_frontend was not marked as affected (see `output/rules_trace_before_rule7.txt`). Rule 7 was added to spread impact one dependency at a time, which also models how failures cascade through real systems. Python's own calculation (`INDIRECT_dependsOn`) confirms the full dependency chain exists.
+
+## Editing the diagrams
+
+The two diagrams are drawn by Graphviz from the `.dot` files in `docs/figures/`. Each box and arrow is one line of text, so a diagram can be changed by editing that file. To redraw one, install Graphviz (on Windows, use the installer from graphviz.org and choose "Add Graphviz to the system PATH"), then run from the project root:
+
+```bash
+dot -Tpng docs/figures/conceptual_model.dot -o docs/figures/conceptual_model.png
+dot -Tpng docs/figures/system_architecture.dot -o docs/figures/system_architecture.png
+```
+
+If a redrawn image comes out wrong, `git restore docs/figures/<file>.png` brings back the committed version.
 
 ## Troubleshooting
 
