@@ -29,7 +29,7 @@ digraph G {
   qry [label="queries.py\nSPARQL, competency\nquestions"];
 
   node [shape=box, style="filled,dashed", fillcolor="#FFFFFF"];
-  worlds [label="Separate Worlds\nQ10 live demo, Q12 conflict"];
+  worlds [label="Separate Worlds\nCQ6 live demo, CQ8 conflict"];
 
   node [shape=ellipse, style=filled, fillcolor="#FFF7D6"];
   hermit [label="HermiT\nreasoner"];

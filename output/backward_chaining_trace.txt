@@ -1,5 +1,5 @@
 ======================================================================
-Investigation 1 (Q5): why is checkout_service affected? (main data)
+Investigation 1 (CQ3): why is checkout_service affected? (main data)
 ======================================================================
   Goal: AffectedService(checkout_service)?
     Try rule 3: checkout_service runs on server server_b

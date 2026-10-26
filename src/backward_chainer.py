@@ -2,7 +2,7 @@
 backward_chainer.py
 
 A goal-driven (backward chaining) engine for BuzDim, written in Python.
-It answers Q5: "What is the root cause of the checkout_service outage?"
+It answers CQ3: "What is the root cause of the checkout_service outage?"
 
 Backward chaining starts from a goal, such as AffectedService(checkout_service),
 finds the rules that could conclude it, and tries to prove each rule's
@@ -15,7 +15,7 @@ run on). This needs "has no failed dependency", a negative check that SWRL
 cannot express, which is why this logic lives in Python.
 
 Four investigations are run:
-    1. Q5, main data: why is checkout_service affected?
+    1. CQ3, main data: why is checkout_service affected?
     2. Main data: is search_service affected? (a goal that cannot be proven)
     3. Scenario B: why is web_frontend affected? (two root causes)
     4. Edge case: a circular dependency between two services
@@ -177,10 +177,10 @@ def main():
     base_kb = fc.load_knowledge_base()
     fc.apply_subproperty_axiom(base_kb)
 
-    # 1. Q5 on the main data
+    # 1. CQ3 on the main data
     investigate(
         base_kb.copy(), "checkout_service",
-        "Investigation 1 (Q5): why is checkout_service affected? (main data)",
+        "Investigation 1 (CQ3): why is checkout_service affected? (main data)",
         "root cause ['orders_db']",
     )
 

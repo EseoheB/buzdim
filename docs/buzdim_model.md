@@ -48,7 +48,7 @@ owl:Thing
 | `AffectedService` | Rule-inferred | Rules 2, 3, and 7 |
 | `CriticalIncident` | Rule-inferred | Rule 4 |
 | `MinorIncident` | Python step | Assigned after reasoning to incidents not classified as critical (closed-world decision) |
-| `HealthyComponent` | Asserted | Used only in the Q12 conflict test |
+| `HealthyComponent` | Asserted | Used only in the CQ8 conflict test |
 
 ## 3. Axioms
 
@@ -72,7 +72,7 @@ Do not declare `HealthyComponent` or `FailedComponent` disjoint with any type cl
 
 ### Distinctness
 
-- `AllDifferent` over all 28 individuals. This is needed for the Q7 count and so that a component given two owners is flagged as an error instead of the two teams being merged.
+- `AllDifferent` over all 28 individuals. This is needed for the CQ4 count and so that a component given two owners is flagged as an error instead of the two teams being merged.
 
 ### Predicate logic forms
 
@@ -144,7 +144,7 @@ Service(?s) ^ dependsOn(?s, ?x) ^ AffectedService(?x) -> AffectedService(?s)
 - Rule 6 creates a relationship, so run the reasoner with `infer_property_values=True` to see its results.
 - Rule 7 was added after testing. HermiT applied rule 2 only to direct dependencies, because it does not pass links derived from the transitive `dependsOn` property into SWRL rules, so web_frontend was missed. Rule 7 spreads impact one step at a time (cascading impact) and reaches web_frontend through checkout_service. This is a limitation worth discussing in the report.
 - The Python forward chainer implements all seven rules as production rules with printed traces.
-- The Python backward chainer handles Q5 (root cause). It finds a failed component with no failed dependencies of its own, which SWRL cannot express because it has no negation. It must also handle cycles and cases where no root cause is found.
+- The Python backward chainer handles CQ3 (root cause). It finds a failed component with no failed dependencies of its own, which SWRL cannot express because it has no negation. It must also handle cycles and cases where no root cause is found.
 - `MinorIncident` is assigned in Python after reasoning. Under the open world assumption, the reasoner never concludes an incident is minor just because nothing made it critical.
 
 ## 6. Individuals (28)
@@ -164,7 +164,7 @@ Service(?s) ^ dependsOn(?s, ?x) ^ AffectedService(?x) -> AffectedService(?s)
 | server_a | Server | platform_team | | cloudwatch |
 | server_b | Server | platform_team | | cloudwatch |
 | server_c | Server | platform_team | | prometheus |
-| server_d | Server (added for Q10) | platform_team | | prometheus |
+| server_d | Server (added for CQ6) | platform_team | | prometheus |
 | load_balancer | LoadBalancer | platform_team | | splunk |
 | order_queue | MessageQueue | platform_team | | none |
 
@@ -230,17 +230,17 @@ Run scenarios B, C, and D on separate copies of the ontology so the main answers
 
 - **Scenario A, main run:** all facts in section 6. Produces the expected answers in section 7.
 - **Scenario B, rule 3 demo:** add alert_005 (CriticalAlert) on server_a. Rule 1 makes server_a failed, then rule 3 makes web_frontend and search_service affected. search_service is the key result, since it was not affected in the main run. This also serves as a forward chaining demo: new data arrives and new conclusions follow.
-- **Scenario C, Q12 conflict:** add alert_005 (CriticalAlert) on server_a and also assert server_a as a `HealthyComponent`. This models a health check saying healthy while an alert says critical. Rule 1 infers failed, which clashes with the disjointness axiom, so the reasoner reports the ontology as inconsistent. Catch `OwlReadyInconsistentOntologyError` and print a clear explanation.
-- **Scenario D, Q10 live classification:** add two new servers, asserted only as `Server`: server_e with cpuUsage 91.5 and server_f with cpuUsage 90.0. The reasoner classifies server_e as an `OverloadedServer` automatically. server_f is not, because the threshold is strictly greater than 90.0, which makes it a boundary test.
+- **Scenario C, CQ8 conflict:** add alert_005 (CriticalAlert) on server_a and also assert server_a as a `HealthyComponent`. This models a health check saying healthy while an alert says critical. Rule 1 infers failed, which clashes with the disjointness axiom, so the reasoner reports the ontology as inconsistent. Catch `OwlReadyInconsistentOntologyError` and print a clear explanation.
+- **Scenario D, CQ6 live classification:** add two new servers, asserted only as `Server`: server_e with cpuUsage 91.5 and server_f with cpuUsage 90.0. The reasoner classifies server_e as an `OverloadedServer` automatically. server_f is not, because the threshold is strictly greater than 90.0, which makes it a boundary test.
 
 ## 9. Implementation checklist
 
-- [ ] Q3: `Server`, `MonitoringTool`, `monitoredBy`; direct query
-- [ ] Q4: transitive `dependsOn`, `FailedComponent`, `AffectedService`; SWRL rules 1, 2, and 7 with reasoner
-- [ ] Q5: Python backward chainer with trace, cycle handling, and a "no root cause found" case
-- [ ] Q7: `directlyDependsOn`, `isDirectlyDependedOnBy`, `HighImpactComponent`, `AllDifferent`
-- [ ] Q8: `CriticalIncident` via rule 4, `MinorIncident` via Python step, `shouldNotify` via rule 6
-- [ ] Q10: float `cpuUsage` values and the `OverloadedServer` defined class
-- [ ] Q11: Python check for components with no `monitoredBy` link
-- [ ] Q12: scenario C on a separate copy, with the inconsistency caught and explained
+- [ ] CQ1: `Server`, `MonitoringTool`, `monitoredBy`; direct query
+- [ ] CQ2: transitive `dependsOn`, `FailedComponent`, `AffectedService`; SWRL rules 1, 2, and 7 with reasoner
+- [ ] CQ3: Python backward chainer with trace, cycle handling, and a "no root cause found" case
+- [ ] CQ4: `directlyDependsOn`, `isDirectlyDependedOnBy`, `HighImpactComponent`, `AllDifferent`
+- [ ] CQ5: `CriticalIncident` via rule 4, `MinorIncident` via Python step, `shouldNotify` via rule 6
+- [ ] CQ6: float `cpuUsage` values and the `OverloadedServer` defined class
+- [ ] CQ7: Python check for components with no `monitoredBy` link
+- [ ] CQ8: scenario C on a separate copy, with the inconsistency caught and explained
 - [ ] Scenario B: rule 3 demonstrated on a separate copy

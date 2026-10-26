@@ -5,9 +5,9 @@ Alerts: 4 (expected 4)
 Incidents: 4 (expected 4)
 Saved to output/buzdim_populated.owl
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp5m1dtt1u
-* Owlready2 * HermiT took 1.6543669700622559 seconds
-* Owlready * Reparenting buzdim.orders_db: {buzdim.Database} => {buzdim.HighImpactComponent, buzdim.Database}
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpulj2cghh
+* Owlready2 * HermiT took 1.7792425155639648 seconds
+* Owlready * Reparenting buzdim.orders_db: {buzdim.Database} => {buzdim.Database, buzdim.HighImpactComponent}
 * Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 Consistency check: consistent

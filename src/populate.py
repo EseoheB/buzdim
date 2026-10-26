@@ -95,7 +95,7 @@ def add_links(onto):
 
     # Ownership, hosting, and monitoring. Blank CSV cells are skipped on
     # purpose: infrastructure does not run on a server, and order_queue
-    # has no monitoring tool (the incomplete data that Q11 looks for).
+    # has no monitoring tool (the incomplete data that CQ7 looks for).
     for row in read_csv("components.csv"):
         component = get_entity(onto, row["name"])
 
@@ -171,7 +171,7 @@ def main():
     with onto:
         create_individuals(onto)
         add_links(onto)
-        # Declare every individual distinct. Needed for the Q7 count and so
+        # Declare every individual distinct. Needed for the CQ4 count and so
         # that a component given two owners is reported as an error instead
         # of the two teams being treated as the same team.
         AllDifferent(list(onto.individuals()))

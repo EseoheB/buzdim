@@ -1,6 +1,6 @@
 
 ======================================================================
-Q3: Which monitoring tool watches each server? (simple lookup)
+CQ1: Which monitoring tool watches each server? (simple lookup)
 ======================================================================
 SPARQL query:
 
@@ -25,14 +25,14 @@ Python cross-check:
 
 Running HermiT on the main ontology (asserted facts and SWRL rules)...
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpr70x5ao3 -Y
-* Owlready2 * HermiT took 1.7242496013641357 seconds
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmph2t5rpt6 -Y
+* Owlready2 * HermiT took 1.7160687446594238 seconds
 * Owlready * Reparenting buzdim.directlyDependsOn: {buzdim.dependsOn, owl.ObjectProperty} => {buzdim.dependsOn}
 * Owlready * Reparenting buzdim.server_d: {buzdim.Server} => {buzdim.OverloadedServer}
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
 
 ======================================================================
-Q4: Which services are affected if orders_db fails? (complex reasoning)
+CQ2: Which services are affected if orders_db fails? (complex reasoning)
 ======================================================================
 FailedComponent: ['orders_db']
 Affected directly (rule 2): ['checkout_service', 'inventory_service', 'payment_service']
@@ -41,13 +41,13 @@ Not affected: ['search_service']
     expected: direct checkout_service, inventory_service, payment_service; indirect web_frontend; not affected search_service
 
 ======================================================================
-Q5: Root cause of the checkout_service outage (backward chaining)
+CQ3: Root cause of the checkout_service outage (backward chaining)
 ======================================================================
 Answered by backward_chainer.py, which prints the full proof trace.
     expected: root cause orders_db
 
 ======================================================================
-Q7: Which components are depended on by 3 or more services? (cardinality)
+CQ4: Which components are depended on by 3 or more services? (cardinality)
 ======================================================================
 HighImpactComponent (reasoner): ['orders_db']
 Direct service dependents per component:
@@ -62,7 +62,7 @@ Direct service dependents per component:
     expected: orders_db only (3); product_db and order_queue have 2 each
 
 ======================================================================
-Q8: Which incidents are critical and which are minor? (classification)
+CQ5: Which incidents are critical and which are minor? (classification)
 ======================================================================
 CriticalIncident (rule 4): ['inc_001', 'inc_004']
 MinorIncident (Python step): ['inc_002', 'inc_003']
@@ -74,7 +74,7 @@ Teams to notify (rule 6):
     expected: critical inc_001, inc_004; minor inc_002, inc_003
 
 ======================================================================
-Q10: How are servers classified by CPU usage? (automatic classification)
+CQ6: How are servers classified by CPU usage? (automatic classification)
 ======================================================================
 Rule: OverloadedServer = Server with cpuUsage > 90.0
   server_a: cpuUsage 45.0 -> not overloaded
@@ -86,8 +86,8 @@ Rule: OverloadedServer = Server with cpuUsage > 90.0
 Live demo: adding two new servers to a separate copy of the ontology
   Added server_e (cpuUsage 91.5) and server_f (cpuUsage 90.0), asserted only as Server
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpagzic8_8
-* Owlready2 * HermiT took 1.4832446575164795 seconds
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp56qgkjhp
+* Owlready2 * HermiT took 1.2725272178649902 seconds
 * Owlready * Reparenting buzdim.server_e: {buzdim.Server} => {buzdim.OverloadedServer}
 * Owlready * (NB: only changes on entities loaded in Python are shown, other changes are done but not listed)
   server_e: cpuUsage 91.5 -> OverloadedServer
@@ -95,7 +95,7 @@ Live demo: adding two new servers to a separate copy of the ontology
     expected: server_e overloaded; server_f not overloaded (the threshold is strictly greater than 90.0)
 
 ======================================================================
-Q11: Which components have no monitoring data? (incomplete information)
+CQ7: Which components have no monitoring data? (incomplete information)
 ======================================================================
 Components with no monitoredBy link (Python check): ['order_queue']
     expected: ['order_queue']
@@ -105,7 +105,7 @@ that order_queue is unmonitored, because a tool might exist that was never
 recorded. Treating missing data as absent is a closed-world application choice.
 
 ======================================================================
-Q12: What happens with conflicting health data? (consistency test)
+CQ8: What happens with conflicting health data? (consistency test)
 ======================================================================
 Conflicting facts added to a separate copy:
   hasAlert(server_a, alert_005), CriticalAlert(alert_005)  (an alert says critical)
@@ -114,7 +114,7 @@ Rule 1 will infer FailedComponent(server_a), and HealthyComponent and
 FailedComponent are declared disjoint.
 
 * Owlready2 * Running HermiT...
-    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmpbyvv45zq
+    java -Xmx2000M -cp C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit;C:\Users\Bvenu\miniconda3\envs\buzdim\Lib\site-packages\owlready2\hermit\HermiT.jar org.semanticweb.HermiT.cli.CommandLine -c -O -D -I file:///C:/Users/Bvenu/AppData/Local/Temp/tmp8b6uez5v
 Result: the reasoner reports the ontology as INCONSISTENT.
 server_a cannot be both healthy and failed, so the conflict is detected
 instead of one fact silently overriding the other.

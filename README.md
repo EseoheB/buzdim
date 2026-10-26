@@ -148,16 +148,16 @@ Incidents not proven critical are then classified as minor, in a Python step aft
 
 ## Competency questions
 
-| Q | Question | Answered by | Result |
+| CQ | Question | Answered by | Result |
 |---|---|---|---|
-| 3 | Which monitoring tool watches each server? | `queries.py` (SPARQL) | server_a, server_b: cloudwatch. server_c, server_d: prometheus |
-| 4 | Which services are affected if orders_db fails? | `rules.py`, `queries.py`, `forward_chainer.py` | checkout, payment, inventory directly. web_frontend indirectly. search_service not affected |
-| 5 | What is the root cause of the checkout_service outage? | `backward_chainer.py` | orders_db |
-| 7 | Which components are depended on by 3 or more services? | `queries.py` | orders_db only |
-| 8 | Which incidents are critical and which are minor? | `queries.py`, `forward_chainer.py` | Critical: inc_001, inc_004. Minor: inc_002, inc_003 |
-| 10 | How is a server classified by CPU usage? | `queries.py` | server_d overloaded. New server_e (91.5) overloaded, server_f (90.0) not |
-| 11 | Which components have no monitoring data? | `queries.py` | order_queue |
-| 12 | What happens with conflicting health data? | `queries.py` | Inconsistency detected |
+| CQ1 | Which monitoring tool watches each server? | `queries.py` (SPARQL) | server_a, server_b: cloudwatch. server_c, server_d: prometheus |
+| CQ2 | Which services are affected if orders_db fails? | `rules.py`, `queries.py`, `forward_chainer.py` | checkout, payment, inventory directly. web_frontend indirectly. search_service not affected |
+| CQ3 | What is the root cause of the checkout_service outage? | `backward_chainer.py` | orders_db |
+| CQ4 | Which components are depended on by 3 or more services? | `queries.py` | orders_db only |
+| CQ5 | Which incidents are critical and which are minor? | `queries.py`, `forward_chainer.py` | Critical: inc_001, inc_004. Minor: inc_002, inc_003 |
+| CQ6 | How is a server classified by CPU usage? | `queries.py` | server_d overloaded. New server_e (91.5) overloaded, server_f (90.0) not |
+| CQ7 | Which components have no monitoring data? | `queries.py` | order_queue |
+| CQ8 | What happens with conflicting health data? | `queries.py` | Inconsistency detected |
 
 ## Example usage
 

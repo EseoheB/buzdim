@@ -62,7 +62,7 @@ with onto:
         pass
 
     class HealthyComponent(Component):
-        """A component reported as healthy. Used only in the conflict test (Q12)."""
+        """A component reported as healthy. Used only in the conflict test (CQ8)."""
         pass
 
     class FailedComponent(Component):

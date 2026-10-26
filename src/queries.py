@@ -3,17 +3,17 @@ queries.py
 
 Answers the BuzDim competency questions in one place:
 
-    Q3   Which monitoring tool watches each server?        (SPARQL lookup)
-    Q4   Which services are affected if orders_db fails?   (SWRL rules + reasoner)
-    Q5   Root cause of the checkout_service outage         (see backward_chainer.py)
-    Q7   Which components are depended on by 3+ services?  (defined class)
-    Q8   Which incidents are critical and which minor?     (rule 4 + Python step)
-    Q10  How are servers classified by CPU usage?          (defined class, live demo)
-    Q11  Which components have no monitoring data?         (Python, closed world)
-    Q12  What happens with conflicting health data?        (consistency test)
+    CQ1   Which monitoring tool watches each server?        (SPARQL lookup)
+    CQ2   Which services are affected if orders_db fails?   (SWRL rules + reasoner)
+    CQ3   Root cause of the checkout_service outage         (see backward_chainer.py)
+    CQ4   Which components are depended on by 3+ services?  (defined class)
+    CQ5   Which incidents are critical and which minor?     (rule 4 + Python step)
+    CQ6  How are servers classified by CPU usage?          (defined class, live demo)
+    CQ7  Which components have no monitoring data?         (Python, closed world)
+    CQ8  What happens with conflicting health data?        (consistency test)
 
 The main questions use output/buzdim_rules.owl, which holds the asserted
-facts and the SWRL rules. The Q10 live demo and the Q12 conflict test each
+facts and the SWRL rules. The CQ6 live demo and the CQ8 conflict test each
 load their own separate copy in a new owlready2 World, so changes made
 there can never affect the main answers.
 
@@ -63,12 +63,12 @@ def load_rules_ontology(world=None):
 
 
 # ==============================================================
-# Q3: simple lookup with SPARQL
+# CQ1: simple lookup with SPARQL
 # Run before reasoning, since a lookup only needs asserted facts.
 # ==============================================================
 
 def answer_q3(onto):
-    heading("Q3: Which monitoring tool watches each server? (simple lookup)")
+    heading("CQ1: Which monitoring tool watches each server? (simple lookup)")
 
     query = """
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -98,11 +98,11 @@ def answer_q3(onto):
 
 
 # ==============================================================
-# Q4, Q7, Q8, Q10, Q11: questions answered after reasoning
+# CQ2, CQ4, CQ5, CQ6, CQ7: questions answered after reasoning
 # ==============================================================
 
 def answer_q4(onto):
-    heading("Q4: Which services are affected if orders_db fails? (complex reasoning)")
+    heading("CQ2: Which services are affected if orders_db fails? (complex reasoning)")
     print("FailedComponent:", names(onto.FailedComponent.instances()))
     affected = list(onto.AffectedService.instances())
     direct = [s for s in affected if onto.orders_db in s.directlyDependsOn]
@@ -116,13 +116,13 @@ def answer_q4(onto):
 
 
 def answer_q5():
-    heading("Q5: Root cause of the checkout_service outage (backward chaining)")
+    heading("CQ3: Root cause of the checkout_service outage (backward chaining)")
     print("Answered by backward_chainer.py, which prints the full proof trace.")
     print("    expected: root cause orders_db")
 
 
 def answer_q7(onto):
-    heading("Q7: Which components are depended on by 3 or more services? (cardinality)")
+    heading("CQ4: Which components are depended on by 3 or more services? (cardinality)")
     print("HighImpactComponent (reasoner):", names(onto.HighImpactComponent.instances()))
     print("Direct service dependents per component:")
     services = list(onto.Service.instances())
@@ -134,7 +134,7 @@ def answer_q7(onto):
 
 
 def answer_q8(onto):
-    heading("Q8: Which incidents are critical and which are minor? (classification)")
+    heading("CQ5: Which incidents are critical and which are minor? (classification)")
     print("CriticalIncident (rule 4):", names(onto.CriticalIncident.instances()))
     print("MinorIncident (Python step):", names(onto.MinorIncident.instances()))
     print("Teams to notify (rule 6):")
@@ -145,7 +145,7 @@ def answer_q8(onto):
 
 
 def answer_q10(onto):
-    heading("Q10: How are servers classified by CPU usage? (automatic classification)")
+    heading("CQ6: How are servers classified by CPU usage? (automatic classification)")
     print("Rule: OverloadedServer = Server with cpuUsage > 90.0")
     for server in sorted(onto.Server.instances(), key=lambda s: s.name):
         status = "OverloadedServer" if isinstance(server, onto.OverloadedServer) else "not overloaded"
@@ -180,7 +180,7 @@ def answer_q10_live():
 
 
 def answer_q11(onto):
-    heading("Q11: Which components have no monitoring data? (incomplete information)")
+    heading("CQ7: Which components have no monitoring data? (incomplete information)")
     unmonitored = [c for c in onto.Component.instances() if not c.monitoredBy]
     print("Components with no monitoredBy link (Python check):", names(unmonitored))
     print("    expected: ['order_queue']")
@@ -191,11 +191,11 @@ def answer_q11(onto):
 
 
 # ==============================================================
-# Q12: conflicting data, on a separate copy
+# CQ8: conflicting data, on a separate copy
 # ==============================================================
 
 def answer_q12():
-    heading("Q12: What happens with conflicting health data? (consistency test)")
+    heading("CQ8: What happens with conflicting health data? (consistency test)")
     world = World()
     onto = load_rules_ontology(world)
 
