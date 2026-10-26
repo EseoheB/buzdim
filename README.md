@@ -39,9 +39,6 @@ buzdim/
             conceptual_model.png       conceptual model diagram (report Figure 1)
             system_architecture.dot    Graphviz source for the architecture diagram
             system_architecture.png    architecture diagram (report Figure 4)
-    report/
-        BuzDim_Technical_Report.pdf    final report (submitted version)
-        BuzDim_Technical_Report.docx   editable source of the report
     data/                      sample data files (the ShopLite individuals)
         components.csv
         server_metrics.csv
