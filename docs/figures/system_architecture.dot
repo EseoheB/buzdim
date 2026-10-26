@@ -1,0 +1,59 @@
+// system_architecture.dot
+// Figure 4: System architecture and data flow of the BuzDim pipeline.
+// Solid arrows are files passed between scripts, dashed gold arrows are calls
+// to the HermiT reasoner, and dotted arrows are files opened in Protege.
+//
+// Render from the project root:
+//     dot -Tpng docs/figures/system_architecture.dot -o docs/figures/system_architecture.png
+
+digraph G {
+  graph [rankdir=TB, fontname="Times New Roman", nodesep=0.3, ranksep=0.4, pad=0.25, dpi=220, splines=spline];
+  node  [fontname="Times New Roman", fontsize=12.5, style=filled, penwidth=1.1];
+  edge  [fontname="Times New Roman", fontsize=10.5, color="#333333", arrowsize=0.75];
+
+  csv [shape=folder, fillcolor="#FDF1E3", label="data/*.csv\n(7 files, 28 individuals)"];
+
+  node [shape=box, fillcolor="#EAF1FB"];
+  build [label="build_ontology.py\nclasses, properties, axioms"];
+  pop   [label="populate.py\nindividuals, AllDifferent,\nconsistency check"];
+  rules [label="rules.py\n6 SWRL rules, minor\nincident step"];
+
+  node [shape=note, fillcolor="#F4F4F4"];
+  o1 [label="buzdim.owl"];
+  o2 [label="buzdim_populated.owl"];
+  o3 [label="buzdim_rules.owl"];
+
+  node [shape=box, fillcolor="#EAF5EA"];
+  fwd [label="forward_chainer.py\nrounds of rule firings\n(scenarios A and B)"];
+  bwd [label="backward_chainer.py\nproof trees, root cause,\ncycle handling"];
+  qry [label="queries.py\nSPARQL, competency\nquestions"];
+
+  node [shape=box, style="filled,dashed", fillcolor="#FFFFFF"];
+  worlds [label="Separate Worlds\nQ10 live demo, Q12 conflict"];
+
+  node [shape=ellipse, style=filled, fillcolor="#FFF7D6"];
+  hermit [label="HermiT\nreasoner"];
+  protege [label="Protégé\n(inspection, DL queries)"];
+
+  node [shape=folder, fillcolor="#FDF1E3"];
+  traces [label="output/*_trace.txt\nreasoning traces"];
+
+  csv -> pop [label="read"];
+  build -> o1 -> pop -> o2 -> rules -> o3;
+  o2 -> fwd; o2 -> bwd; o3 -> qry;
+  qry -> worlds [style=dashed, label="copies"];
+  {fwd bwd qry} -> traces [color="#777777"];
+
+  edge [style=dashed, color="#8A6D00", dir=both, arrowtail=none];
+  hermit -> pop [dir=back, arrowtail=vee, arrowhead=none];
+  hermit -> rules [dir=back, arrowtail=vee, arrowhead=none];
+  hermit -> qry [dir=back, arrowtail=vee, arrowhead=none];
+
+  edge [style=dotted, color="#666666", dir=forward];
+  o2 -> protege; o3 -> protege;
+
+  {rank=same; build; csv;}
+  {rank=same; o1;}
+  {rank=same; fwd; bwd; qry;}
+  {rank=same; hermit; o2;}
+}

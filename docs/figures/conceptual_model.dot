@@ -1,0 +1,58 @@
+// conceptual_model.dot
+// Figure 1: Conceptual model of the BuzDim ontology.
+// Boxes are classes (subclasses listed inside), hollow arrows are subclass links,
+// blue arrows are object properties, and the dashed box lists inferred state classes.
+//
+// Render from the project root:
+//     dot -Tpng docs/figures/conceptual_model.dot -o docs/figures/conceptual_model.png
+
+digraph G {
+  graph [rankdir=TB, fontname="Times New Roman", nodesep=0.6, ranksep=0.75, pad=0.25, dpi=220, splines=spline];
+  node  [shape=plain, fontname="Times New Roman", fontsize=13];
+  edge  [fontname="Times New Roman", fontsize=11, arrowsize=0.75];
+
+  Incident [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#FDF1E3">
+    <tr><td><b>Incident</b></td></tr><tr><td border="1" sides="t"><font point-size="11">CriticalIncident<br/>MinorIncident</font></td></tr></table>>];
+  Alert [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#FDF1E3">
+    <tr><td><b>Alert</b></td></tr><tr><td border="1" sides="t"><font point-size="11">CriticalAlert<br/>WarningAlert</font></td></tr></table>>];
+  Component [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="7" bgcolor="#EAF1FB"><tr><td><b>Component</b></td></tr></table>>];
+  Team [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="6" bgcolor="#EAF5EA"><tr><td><b>Team</b></td></tr></table>>];
+  Tool [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="6" bgcolor="#EAF5EA"><tr><td><b>MonitoringTool</b></td></tr></table>>];
+  Service [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#EAF1FB">
+    <tr><td><b>Service</b></td></tr><tr><td border="1" sides="t"><font point-size="11">CustomerFacingService<br/>InternalService</font></td></tr></table>>];
+  DataStore [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#EAF1FB">
+    <tr><td><b>DataStore</b></td></tr><tr><td border="1" sides="t"><font point-size="11">Database<br/>Cache</font></td></tr></table>>];
+  Infrastructure [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#EAF1FB">
+    <tr><td><b>Infrastructure</b></td></tr><tr><td border="1" sides="t"><font point-size="11">LoadBalancer<br/>MessageQueue</font></td></tr></table>>];
+  Server [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#EAF1FB">
+    <tr><td><b>Server</b></td></tr><tr><td border="1" sides="t" align="left"><font point-size="11">cpuUsage: float<br align="left"/>memoryUsage: float<br align="left"/>diskUsage: float<br align="left"/></font></td></tr></table>>];
+  States [label=<<table border="1" style="dashed" cellborder="0" cellspacing="0" cellpadding="5" bgcolor="#F4F4F4">
+    <tr><td><b>Inferred state classes</b></td></tr>
+    <tr><td border="1" sides="t" align="left"><font point-size="11">FailedComponent (rule 1)<br align="left"/>AffectedService (rules 2, 3, 7)<br align="left"/>HighImpactComponent (defined class)<br align="left"/>OverloadedServer (rule 5, defined class)<br align="left"/>HealthyComponent (disjoint with Failed)<br align="left"/></font></td></tr></table>>];
+
+  {rank=same; Incident; Team;}
+  {rank=same; Alert; Component;}
+  {rank=same; Service; DataStore; Infrastructure; Tool;}
+  {rank=same; Server; States;}
+
+  // properties (blue)
+  edge [color="#1F4E8C", fontcolor="#1F4E8C", arrowhead=vee];
+  Incident -> Component [label="  affects"];
+  Incident -> Team [label="  shouldNotify (rule 6)", style=dashed];
+  Component -> Alert [label="hasAlert", constraint=false];
+  Component -> Team [label="  ownedBy (functional)", dir=forward];
+  Component -> Tool [label="  monitoredBy"];
+  Component:e -> Component:s [label="  dependsOn (transitive)\l  directlyDependsOn\l", dir=forward];
+  Service -> Server [label=" runsOn"];
+  DataStore -> Server [label=" runsOn"];
+
+  // subclass edges (black, hollow head at the parent)
+  edge [color="#222222", fontcolor="#222222", arrowhead=none, arrowtail=onormal, dir=back, style=solid];
+  Component -> Service; Component -> DataStore; Component -> Infrastructure;
+  Infrastructure -> Server;
+
+  // layout helpers
+  edge [style=invis, dir=none];
+  Alert -> Component [constraint=false]; Alert -> Service; Tool -> States; Infrastructure -> States;
+  Service -> DataStore; DataStore -> Infrastructure; Infrastructure -> Tool;
+}
