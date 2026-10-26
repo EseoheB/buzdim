@@ -61,12 +61,12 @@ buzdim/
         reproduce_before_rule7.py  runs the rules without rule 7 to show the HermiT limitation
     output/                    ontology files and reasoning traces
     screenshots/               Protege views of the ontology
-        01_class_hierarchy_asserted.jpg        class tree as designed
-        02_class_hierarchy_inferred.jpg        class tree after reasoning (no unsatisfiable classes)
-        03_dl_query_high_impact_component.jpg  DL query returning orders_db
-        04_dl_query_overloaded_server.jpg      DL query returning server_d
-        05_object_properties.jpg               directlyDependsOn: subproperty, inverse, not transitive
-        06_individuals.jpg                     orders_db with its asserted and inferred facts
+        01_class_hierarchy_asserted.JPG        class tree as designed
+        02_class_hierarchy_inferred.JPG        class tree after reasoning (no unsatisfiable classes)
+        03_dl_query_high_impact_component.JPG  DL query returning orders_db
+        04_dl_query_overloaded_server.JPG      DL query returning server_d
+        05_object_properties.JPG               directlyDependsOn: subproperty, inverse, not transitive
+        06_individuals.JPG                     orders_db with its asserted and inferred facts
 ```
 
 ## Requirements
